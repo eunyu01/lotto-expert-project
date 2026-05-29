@@ -1,0 +1,28 @@
+project:
+  name: "be rich 가속기 [be rich 加速器]"
+  description: "AI Data Lab for Lotto Prediction [로또 예측을 위한 AI 데이터 랩]"
+
+paths:
+  raw_data: "data/raw/lotto_history.csv"
+  processed_data: "data/processed/lotto_processed.csv"
+  models_dir: "artifacts/models"
+  metrics_dir: "artifacts/metrics"
+  charts_dir: "artifacts/charts"
+  reports_dir: "reports"
+
+data:
+  target: "winning_numbers"
+  window_size: 12
+  feature_dim: 94
+
+modeling:
+  random_seed: 42
+  test_ratio: 0.2
+  baseline_model: "LogisticRegression"
+  deep_model: "Bi-LSTM"
+
+deep_learning:
+  epochs: 60
+  learning_rate: 0.001
+  batch_size: 32
+  hidden_dim: 256
