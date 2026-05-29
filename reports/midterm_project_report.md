@@ -1,4 +1,4 @@
-# Final Project Report [최종 프로젝트 보고서]
+# Midterm Project Report [중간 프로젝트 보고서]
 
 ## 1. Executive Summary [개요]
 이 프로젝트는 Python-first AI/Data Lab으로, 로또 당첨 데이터(lotto_history.csv)를 사용하여 데이터 품질검사, EDA, 재현 가능한 분석 파이프라인, scikit-learn baseline 모델, PyTorch 딥러닝 모델을 구현했다. [本项目是一个 Python-first AI/Data Lab，利用乐透中奖数据实现了数据质量检查、EDA、可复现的分析流水线、scikit-learn 基准模型以及 PyTorch 深度学习模型。]
