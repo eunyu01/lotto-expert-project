@@ -13,7 +13,7 @@ paths:
 data:
   target: "winning_numbers"
   window_size: 12
-  feature_dim: 94
+  feature_dim: 93
 
 modeling:
   random_seed: 42

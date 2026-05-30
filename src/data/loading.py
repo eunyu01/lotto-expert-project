@@ -5,19 +5,26 @@ import os
 import time
 
 class LottoDataEngine:
-    def __init__(self, file_path='lotto_history.csv'):
-        self.file_path = file_path
+    def __init__(self, raw_path='data/raw/lotto_history.csv', processed_path='data/processed/lotto_history_synced.csv'):
+        self.raw_path = raw_path
+        self.processed_path = processed_path
         self.base_url = "https://www.dhlottery.co.kr/common.do?method=getLottoNumber&drwNo="
 
     def sync_data(self):
         print(f"[1/4] 正在同步数据至最新期数...")
+        
+        # 优先从已处理的路径读取，如果不存在则从原始路径读取
+        source_path = self.processed_path if os.path.exists(self.processed_path) else self.raw_path
+        
+        df = pd.DataFrame()
         start_drw = 1
-        if os.path.exists(self.file_path):
+        
+        if os.path.exists(source_path):
             try:
-                df = pd.read_csv(self.file_path, header=None)
+                df = pd.read_csv(source_path, header=None)
                 start_drw = len(df) + 1
-            except:
-                pass
+            except Exception as e:
+                print(f"   - 读取源文件失败: {e}")
         
         new_data = []
         consecutive_fails = 0
@@ -41,10 +48,17 @@ class LottoDataEngine:
         
         if new_data:
             df_new = pd.DataFrame(new_data)
-            df_new.to_csv(self.file_path, mode='a', header=False, index=False)
-            print(f"   - 新增 {len(new_data)} 期数据，同步完成。")
+            df_final = pd.concat([df, df_new], ignore_index=True)
+            # 确保目录存在
+            os.makedirs(os.path.dirname(self.processed_path), exist_ok=True)
+            df_final.to_csv(self.processed_path, header=False, index=False)
+            print(f"   - 新增 {len(new_data)} 期数据，同步完成。保存至: {self.processed_path}")
         else:
-            print("   - 本地数据已是最新。")
+            print("   - 数据已是最新。")
+            if not os.path.exists(self.processed_path) and os.path.exists(self.raw_path):
+                # 如果没有新数据，但 processed 文件还没生成，则复制一份
+                os.makedirs(os.path.dirname(self.processed_path), exist_ok=True)
+                pd.read_csv(self.raw_path, header=None).to_csv(self.processed_path, header=False, index=False)
 
     def generate_synthetic_data(self, num_rounds=1000):
         """
@@ -69,7 +83,9 @@ class LottoDataEngine:
         if custom_data is not None:
             data = custom_data
         else:
-            df = pd.read_csv(self.file_path, header=None)
+            # 优先使用同步后的数据
+            load_path = self.processed_path if os.path.exists(self.processed_path) else self.raw_path
+            df = pd.read_csv(load_path, header=None)
             data = df.values
         
         num_rows = len(data)

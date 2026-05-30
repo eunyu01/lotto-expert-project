@@ -22,7 +22,10 @@ def main():
     print("="*50)
 
     # 2. 데이터 수집 및 전처리 (Session 4/5)
-    engine = LottoDataEngine(config['paths']['raw_data'])
+    engine = LottoDataEngine(
+        raw_path=config['paths']['raw_data'],
+        processed_path=config['paths']['processed_data']
+    )
     engine.sync_data()
     features = engine.get_features()
     
